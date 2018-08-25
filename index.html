@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Demo: Connection-Responsive Images</title>
+
+	<style>
+		img {
+			max-width: 100%;
+		}
+
+		html,
+		body,
+		input,
+		select,
+		button {
+			font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+			font-size: 16px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Demo: Connection-Responsive Images</h1>
+	<p>
+		This demonstrates setting image URLs dynamically based on the NetworkInformation API's connection type. This pattern should be combined with a modern Picture element for responsive images, thus also looking
+		at the viewport size.
+	</p>
+	<p>
+		Safari 11.1.2 will not currently support this, but Chrome 68 will. Safari will fall back to a medium quality image and Chrome will use a progressively higher quality image, based on connection speed. To
+		emulate this effect, use the Network panel to throttle the speed.
+	</p>
+	<p id="connection-info"></p>
+
+	<img src="placeholder.jpg">
+
+	<h2>Additional resources</h2>
+	<ul>
+		<li>
+			<a href="https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API" rel="nofollow noopener">https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API</a>
+		</li>
+	</ul>
+
+	<script>
+		const paragraph = document.querySelector('#connection-info');
+		const image = document.querySelector('img');
+		const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+		if (connection === undefined) {
+			paragraph.innerHTML = `<strong>Connection is undefined or inaccessible!</strong>`;
+			image.src = newImageUrl();
+		}
+		else {
+			const type = connection.effectiveType === undefined ? undefined : connection.effectiveType;
+			paragraph.innerHTML = `<strong>Connection effectiveType</strong>: ${type}`;
+			image.src = newImageUrl(type);
+		}
+
+		function newImageUrl(type) {
+			let url = '';
+			// Allow empty type as a fallback solution
+			if (type === undefined) {
+				url = 'image-mq-1280.jpg';
+			}
+			else {
+				if (type === '4g') {
+					url = 'image-hq-1920.jpg';
+				}
+				else if (type === '3g') {
+					url = 'image-mq-1280.jpg';
+				}
+				else {
+					url = 'image-lq-768.jpg';
+				}
+			}
+
+			return url;
+		};
+	</script>
+</body>
+
+</html>
